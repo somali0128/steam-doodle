@@ -4,6 +4,7 @@ const db = require('./db');
 
 class CoreLogic {
   async task(round) {
+    console.log(`********** Main TASK ${round} **********`);
     try {
       const cid = await main();
       /**
@@ -12,6 +13,7 @@ class CoreLogic {
        *
        */
       await db.setDoodle(cid, round);
+      console.log(`********** End Main TASK ${round} **********`);
       return cid;
     } catch (err) {
       console.log('ERROR IN TASK', err);
@@ -20,7 +22,7 @@ class CoreLogic {
   }
 
   async fetchSubmission(round) {
-    console.log('IN FETCH SUBMISSION');
+    console.log(`********** Fetch Submission ${round} **********`);
 
     /**
      * 1. Fetch the cid from the database
@@ -31,6 +33,7 @@ class CoreLogic {
      */
     const cid = await db.getDoodle(round); // retrieves the cid
     console.log('Found CID in round ', round, cid);
+    console.log(`********** End Fetch Submission ${round} **********`);
     return cid;
   }
 
@@ -128,7 +131,7 @@ class CoreLogic {
   async submitDistributionList(round) {
     // This function just upload your generated dustribution List and do the transaction for that
 
-    console.log('SubmitDistributionList called');
+    console.log(`********** Submit Distribution List ${round} **********`);
 
     try {
       const distributionList = await this.generateDistributionList(round);
@@ -142,7 +145,8 @@ class CoreLogic {
       if (decider) {
         const response =
           await namespaceWrapper.distributionListSubmissionOnChain(round);
-        console.log('RESPONSE FROM DISTRIBUTION LIST', response);
+        console.log(`RESPONSE OF SUBMIT DISTRIBUTION ${round}`, response);
+        console.log(`********** End Submit Distribution List ${round} **********`);
       }
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
@@ -247,7 +251,7 @@ class CoreLogic {
   }
 
   async auditTask(roundNumber) {
-    console.log('auditTask called with round', roundNumber);
+    console.log(`********** Audit Task ${roundNumber} **********`);
     console.log(
       await namespaceWrapper.getSlot(),
       'current slot while calling auditTask',
@@ -256,6 +260,7 @@ class CoreLogic {
       this.validateNode,
       roundNumber,
     );
+    console.log(`********** End Audit Task ${roundNumber} **********`);
   }
 
   async auditDistribution(roundNumber) {
