@@ -3,8 +3,8 @@ const { namespaceWrapper } = require('./namespaceWrapper');
 const setDoodle = async (cid, round) => {
   const db = await namespaceWrapper.getDb();
   try {
-    let existingData = await db.findOne({ cid });
-    if (!existingData) {
+    let existingRound = await db.findOne({ round });
+    if (!existingRound) {
       const date = new Date().toISOString().slice(0, 10);
       await db.insert({ date, cid, round });
       console.log('new steam doodle set');
