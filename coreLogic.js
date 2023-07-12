@@ -4,20 +4,31 @@ const db = require('./db');
 
 class CoreLogic {
   async task(round) {
-   try{
-    const cid = await main();
-    await db.setDoodle(cid, round);
-    return cid;
-   } catch (err) {
+    try {
+      const cid = await main();
+      /**
+       * 1. Store the cid in the database
+       * 2. If the cid is already present in the database, then return null
+       *
+       */
+      await db.setDoodle(cid, round);
+      return cid;
+    } catch (err) {
       console.log('ERROR IN TASK', err);
       return null;
-   }
+    }
   }
-
 
   async fetchSubmission(round) {
     console.log('IN FETCH SUBMISSION');
 
+    /**
+     * 1. Fetch the cid from the database
+     * 2. If the cid is not present in the database in this round, then return null
+     * 2.1 Null submissions means same doodle already exists in the database, no reward
+     * 3. If the cid is present in the database in this round, then return the cid
+     * 3.1 Non-null submissions means new doodle, reward
+     */
     const cid = await db.getDoodle(round); // retrieves the cid
     console.log('Found CID in round ', round, cid);
     return cid;
@@ -139,11 +150,6 @@ class CoreLogic {
   }
 
   async validateNode(submission_value, round) {
-    // Write your logic for the validation of submission value here and return a boolean value in response
-
-    // The sample logic can be something like mentioned below to validate the submission
-
-    // try{
 
     console.log('Received submission_value', submission_value, round);
     // const generatedValue = await namespaceWrapper.storeGet("cid");

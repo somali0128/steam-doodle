@@ -35,7 +35,18 @@ const getDoodle = async (round) => {
   }
 };
 
+const getDoodleList = async () => {
+  const db = await namespaceWrapper.getDb();
+  try {
+    const resp = await db.find({});
+    return resp;
+  } catch (err) {
+    return undefined;
+  }
+};
+
 module.exports = {
   setDoodle,
   getDoodle,
+  getDoodleList,
 };

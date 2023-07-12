@@ -1,4 +1,5 @@
 const { coreLogic } = require('./coreLogic');
+const db = require('./db');
 const { app } = require('./init');
 const {
   namespaceWrapper,
@@ -91,4 +92,14 @@ if (app) {
 
     res.status(200).json({ taskState: state });
   });
+
+  app.get('/getDoodleList', async (req, res) => {
+  try {
+    const doodleList = await db.getDoodleList();
+    res.send(doodleList);
+  } catch (err) {
+    console.log('ERROR IN GET DOODLE LIST', err);
+    res.send('ERROR IN GET DOODLE LIST');
+  }
+});
 }
