@@ -11,3 +11,4 @@ config/*
 .env
 taskStateInfoKeypair.json
 localKOIIDB.db
+config-task.yml
