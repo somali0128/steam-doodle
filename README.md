@@ -25,9 +25,7 @@ To run and test this task locally:
 
 ## What's the reward distribution rule?
 
-Bounty will be distributed to people who submit the doodle to IPFS and the cid of the doodle is submitted to K2. The bounty per round is 5 KOII.
-
-Note: If the same doodle is submitted, you won't get the reward. Only new doodles will be rewarded. So keep it running and make sure you won't miss the steam doodle update :wink:.
+Bounty will be distributed to people who submit the doodle to IPFS and the cid of the doodle is submitted to K2. The bounty per round is 1 KOII.
 
 ## How to submit the doodle to IPFS?
 
