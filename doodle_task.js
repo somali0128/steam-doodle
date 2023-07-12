@@ -1,5 +1,5 @@
 require('dotenv').config();
-const puppeteer = require('puppeteer');
+const PCR = require("puppeteer-chromium-resolver");
 const axios = require('axios');
 const { Web3Storage, File } = require('web3.storage');
 const storageClient = new Web3Storage({
@@ -8,8 +8,12 @@ const storageClient = new Web3Storage({
 
 const main = async () => {
   try {
-    const browser = await puppeteer.launch({
+    const options = {};
+    const stats = await PCR(options);
+
+    const browser = await stats.puppeteer.launch({
       headless: 'new',
+      executablePath: stats.executablePath 
     });
     const page = await browser.newPage();
     await page.goto('https://store.steampowered.com/');
@@ -25,7 +29,15 @@ const main = async () => {
 
     // Downloading the image
     console.log('Downloading image...', imageUrl);
-    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    const headers = {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537',
+      },
+      responseType: 'arraybuffer',
+      timeout: 3000,
+    };
+    const response = await axios.get(imageUrl, headers);
     const buffer = Buffer.from(response.data, 'binary');
 
     const date = new Date().toISOString().slice(0, 10);
