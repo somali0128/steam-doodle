@@ -9,19 +9,19 @@ beforeAll(async () => {
 
 describe('Performing the task', () => {
   it('should performs the core logic task', async () => {
-    const round = 2;
+    const round = 1;
     const result = await coreLogic.task(round);
     expect(result).not.toContain('ERROR IN EXECUTING TASK');
   }, 1000000);
 
   it('should fetch the submission', async () => {
-    const round = 2;
+    const round = 1;
     const result = await coreLogic.fetchSubmission(round);
     expect(result).toBeDefined();
     expect(result).not.toBeNaN();
   });
   it('should make the submission to k2 for dummy round 1', async () => {
-    const round = 2;
+    const round = 1;
     await coreLogic.submitTask(round);
     const taskState = await namespaceWrapper.getTaskState();
     const schema = Joi.object()

@@ -1,5 +1,7 @@
 const { namespaceWrapper } = require('./namespaceWrapper');
 const { main } = require('./doodle_task');
+const { submit } = require('./doodle_submit');
+const { audit } = require('./doodle_audit');
 const db = require('./db');
 
 class CoreLogic {
@@ -9,7 +11,7 @@ class CoreLogic {
       const cid = await main();
       /**
        * 1. Store the cid in the database
-       * 2. If the cid is already present in the database, then return null
+       * 2. If the cid has same round that already present in the database, then return null
        *
        */
       await db.setDoodle(cid, round);
@@ -23,18 +25,9 @@ class CoreLogic {
 
   async fetchSubmission(round) {
     console.log(`********** Fetch Submission ${round} **********`);
-
-    /**
-     * 1. Fetch the cid from the database
-     * 2. If the cid is not present in the database in this round, then return null
-     * 2.1 Null submissions means same doodle already exists in the database, no reward
-     * 3. If the cid is present in the database in this round, then return the cid
-     * 3.1 Non-null submissions means new doodle, reward
-     */
-    const cid = await db.getDoodle(round); // retrieves the cid
-    console.log('Found CID in round ', round, cid);
+    const submission = await submit(round);
     console.log(`********** End Fetch Submission ${round} **********`);
-    return cid;
+    return submission;
   }
 
   async generateDistributionList(round, _dummyTaskState) {
@@ -146,7 +139,9 @@ class CoreLogic {
         const response =
           await namespaceWrapper.distributionListSubmissionOnChain(round);
         console.log(`RESPONSE OF SUBMIT DISTRIBUTION ${round}`, response);
-        console.log(`********** End Submit Distribution List ${round} **********`);
+        console.log(
+          `********** End Submit Distribution List ${round} **********`,
+        );
       }
     } catch (err) {
       console.log('ERROR IN SUBMIT DISTRIBUTION', err);
@@ -154,22 +149,19 @@ class CoreLogic {
   }
 
   async validateNode(submission_value, round) {
+    console.log(`********** Validate Node ${round} **********`);
 
     console.log('Received submission_value', submission_value, round);
-    // const generatedValue = await namespaceWrapper.storeGet("cid");
-    // console.log("GENERATED VALUE", generatedValue);
-    // if(generatedValue == submission_value){
-    //   return true;
-    // }else{
-    //   return false;
-    // }
-    // }catch(err){
-    //   console.log("ERROR  IN VALDIATION", err);
-    //   return false;
-    // }
+    let vote;
+    try {
+      vote = await audit(submission_value);
+    } catch (err) {
+      console.log('ERROR IN VALIDATING NODE', err);
+      vote = false;
+    }
 
-    // For succesfull flow we return true for now
-    return true;
+    console.log(`********** End Validate Node ${round} Vote ${vote} **********`);
+    return vote;
   }
 
   async shallowEqual(object1, object2) {

@@ -3,10 +3,12 @@ const index = require('../index');
 
 async function test_coreLogic() {
   // await coreLogic.task();
-  const submission = await coreLogic.fetchSubmission(1);
-  console.log(submission);
-  // const vote = await coreLogic.validateNode(submission, 1);
+  // const submission = await coreLogic.fetchSubmission(1);
+  // console.log(submission);
+  const vote = await coreLogic.validateNode('bafybeiajqi4rbtlm27vohz2cclycadnt627o3autoj2pz46bmqcjw2yshq', 1);
   // let vote = true;
+  console.log('vote', vote);
+
   const _dummyTaskState = {
     stake_list: {
       '2NstaKU4kif7uytmS2PQi9P5M5bDLYSF2dhUNFhJbxHL': 20000000000,
