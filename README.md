@@ -8,6 +8,8 @@ This task scrape steam doodle and submit the doodle to IPFS and the cid of the d
 ## What's in the task?
 
 - `doodle_task.js` - This is the main task file. It contains the code for scraping the doodle and submitting it to IPFS and K2.
+- `doodle_submit.js` - This file contains the code that use cid of steam doodle generate the signatuer, then create a new node_proof, upload to IPFS and use proof_cid as the submission value.
+- `doodle_audit.js` - This file contains function that check if signature is true and avaliable of doodle. Next return the value of vote.
 - `db.js` - This file contains the code for connecting to the database.
 - It also include GET endpoint `/getDoodleList` to get the list of doodles submitted to K2.
 
