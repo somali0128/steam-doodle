@@ -11,26 +11,26 @@ const audit = async (submission) => {
     }
     const output = outputraw.data;
     console.log('OUTPUT', output);
-    const { steam_doodle, nodePublicKey, signature } = output;
+    const { steam_special, nodePublicKey, signature } = output;
     const voteResp = await namespaceWrapper.verifySignature(signature, nodePublicKey);
     const cleanVoteRespData = voteResp.data.replace(/"/g, '');
-    if (!voteResp || cleanVoteRespData !== steam_doodle) {
+    if (!voteResp || cleanVoteRespData !== steam_special) {
         console.log('VOTE FALSE');
         console.log('SLASH VOTE DUE TO DATA MISMATCH');
         return false;
     }
-    const steam_doodle_resp = await dataFromCid(steam_doodle);
-    if (!steam_doodle_resp) {
+    const steam_special_resp = await dataFromCid(steam_special);
+    if (!steam_special_resp) {
         console.log('VOTE FALSE');
-        console.log('SLASH VOTE DUE TO FAKE STEAM DOODLE');
+        console.log('SLASH VOTE DUE TO FAKE STEAM special');
         return false;
     }
-    // Check if the steam doodle is valid
-    // If format of steam_doodle_resp.data is image, return true
+    // Check if the steam special is valid
+    // If format of steam_special_resp.data is image, return true
     // Else return false
-    if (!typeof steam_doodle_resp.data === 'image') {
+    if (!typeof steam_special_resp.data === 'json') {
         console.log('VOTE FALSE');
-        console.log('SLASH VOTE DUE TO FAKE STEAM DOODLE');
+        console.log('SLASH VOTE DUE TO FAKE STEAM special');
         return false;
     }
     console.log('VOTE TRUE');

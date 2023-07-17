@@ -1,16 +1,16 @@
 const { namespaceWrapper } = require('./namespaceWrapper');
 
-const setDoodle = async (cid, round) => {
+const setSpecial = async (cid, round) => {
   const db = await namespaceWrapper.getDb();
   try {
     let existingRound = await db.findOne({ round });
     if (!existingRound) {
       const date = new Date().toISOString().slice(0, 10);
       await db.insert({ date, cid, round });
-      console.log('new steam doodle set');
+      console.log('new steam special set');
       return true;
     } else {
-      console.log('steam doodle already set');
+      console.log('steam special already set');
       return false;
     }
   } catch (err) {
@@ -18,16 +18,16 @@ const setDoodle = async (cid, round) => {
   }
 };
 
-const getDoodle = async (round) => {
+const getSpecial = async (round) => {
   const db = await namespaceWrapper.getDb();
   try {
     const resp = await db.findOne({ round });
 
     if (resp) {
-        console.log('steam doodle get', resp);
+        console.log('steam special get', resp);
       return resp.cid;
     } else{
-        console.log('steam doodle not found');
+        console.log('steam special not found');
         return null;
     }
   } catch (err) {
@@ -35,7 +35,7 @@ const getDoodle = async (round) => {
   }
 };
 
-const getDoodleList = async () => {
+const getSpecialList = async () => {
   const db = await namespaceWrapper.getDb();
   try {
     const resp = await db.find({});
@@ -46,7 +46,7 @@ const getDoodleList = async () => {
 };
 
 module.exports = {
-  setDoodle,
-  getDoodle,
-  getDoodleList,
+  setSpecial,
+  getSpecial,
+  getSpecialList,
 };

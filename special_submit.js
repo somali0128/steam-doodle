@@ -15,17 +15,17 @@ const { namespaceWrapper } = require('./namespaceWrapper');
 
 const submit = async round => {
 
-  const cid = await db.getDoodle(round); // retrieves the cid
+  const cid = await db.getSpecial(round); // retrieves the cid
   console.log('Found CID in round ', round, cid);
   const signature = await namespaceWrapper.payloadSigning(cid);
 
   const submissionValue = {
-    steam_doodle: cid,
+    steam_special: cid,
     nodePublicKey: await namespaceWrapper.getMainAccountPubkey(),
     signature: signature,
   };
 
-  const filename = `steam-doodle-proof-${round}.json`;
+  const filename = `steam-special-proof-${round}.json`;
   const file = new File([JSON.stringify(submissionValue)], filename, {
     type: 'application/json',
     });

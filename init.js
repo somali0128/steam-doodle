@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send("Welcome to Steam doodle API, you can use /getDoodleList to fetch the doodle list");
+  res.send("Welcome to Steam daily special API, you can use /getSpecialList to fetch the special list");
 });
 
 const _server = app.listen(EXPRESS_PORT, () => {

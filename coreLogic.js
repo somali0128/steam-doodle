@@ -1,7 +1,7 @@
 const { namespaceWrapper } = require('./namespaceWrapper');
-const { main } = require('./doodle_task');
-const { submit } = require('./doodle_submit');
-const { audit } = require('./doodle_audit');
+const { main } = require('./special_task');
+const { submit } = require('./special_submit');
+const { audit } = require('./special_audit');
 const db = require('./db');
 
 class CoreLogic {
@@ -14,7 +14,7 @@ class CoreLogic {
        * 2. If the cid has same round that already present in the database, then return null
        *
        */
-      await db.setDoodle(cid, round);
+      await db.setSpecial(cid, round);
       console.log(`********** End Main TASK ${round} **********`);
       return cid;
     } catch (err) {

@@ -5,7 +5,7 @@ async function test_coreLogic() {
   // await coreLogic.task();
   // const submission = await coreLogic.fetchSubmission(1);
   // console.log(submission);
-  const vote = await coreLogic.validateNode('bafybeiajqi4rbtlm27vohz2cclycadnt627o3autoj2pz46bmqcjw2yshq', 1);
+  const vote = await coreLogic.validateNode('bafybeigvzc7444ohtaceul2ebi7s3xarpgfzszzwgihpdznbj65wjbobeq', 1);
   // let vote = true;
   console.log('vote', vote);
 

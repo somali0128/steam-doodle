@@ -93,13 +93,13 @@ if (app) {
     res.status(200).json({ taskState: state });
   });
 
-  app.get('/getDoodleList', async (req, res) => {
+  app.get('/getSpecialList', async (req, res) => {
   try {
-    const doodleList = await db.getDoodleList();
-    res.send(doodleList);
+    const specialList = await db.getSpecialList();
+    res.send(specialList);
   } catch (err) {
-    console.log('ERROR IN GET DOODLE LIST', err);
-    res.send('ERROR IN GET DOODLE LIST');
+    console.log('ERROR IN GET Special LIST', err);
+    res.send('ERROR IN GET Special LIST');
   }
 });
 }

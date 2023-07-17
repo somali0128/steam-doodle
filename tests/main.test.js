@@ -156,7 +156,7 @@ describe('Performing the task', () => {
   it('should test the endpoint', async () => {
     const response = await axios.get('http://localhost:10000');
     expect(response.status).toBe(200);
-    expect(response.data).toEqual("Welcome to Steam doodle API, you can use /getDoodleList to fetch the doodle list");
+    expect(response.data).toEqual("Welcome to Steam daily special API, you can use /getSpecialList to fetch the special list");
   });
 });
 
