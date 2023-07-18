@@ -1,5 +1,6 @@
 require('dotenv').config();
-const PCR = require('puppeteer-chromium-resolver');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
 const axios = require('axios');
 const { Web3Storage, File } = require('web3.storage');
 const storageClient = new Web3Storage({
@@ -8,31 +9,25 @@ const storageClient = new Web3Storage({
 
 const main = async () => {
   try {
-    const options = {};
-    const stats = await PCR(options);
-
-    const browser = await stats.puppeteer.launch({
-      headless: 'new',
-      executablePath: stats.executablePath,
-    });
-    const page = await browser.newPage();
-    await page.goto('https://store.steampowered.com/');
-
-    const gameSales = await page.evaluate(() => {
-      const salesList = Array.from(
-        document.querySelectorAll('#tab_specials_content .tab_item'),
-      );
-      return salesList.map(sale => {
-        const name = sale.querySelector('.tab_item_name').innerText;
-        const originalPrice = sale.querySelector('.discount_original_price')
-          ? sale.querySelector('.discount_original_price').innerText
-          : 'N/A';
-        const finalPrice = sale.querySelector('.discount_final_price')
-          ? sale.querySelector('.discount_final_price').innerText
-          : 'N/A';
-        const topTags = Array.from(sale.querySelectorAll('.top_tag')).map(
-          tag => tag.innerText,
-        );
+  const gameSales = await axios.get('https://store.steampowered.com/', {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
+    },
+    timeout: 10000,
+    })
+    .then(response => {
+      const dom = new JSDOM(response.data);
+      const salesList = dom.window.document.querySelectorAll('#tab_specials_content .tab_item');
+  
+      const gameSales = Array.from(salesList).map(sale => {
+        const name = sale.querySelector('.tab_item_name').textContent;
+        const originalPriceElement = sale.querySelector('.discount_original_price');
+        const finalPriceElement = sale.querySelector('.discount_final_price');
+        const topTags = Array.from(sale.querySelectorAll('.top_tag')).map(tag => tag.textContent);
+  
+        const originalPrice = originalPriceElement ? originalPriceElement.textContent : 'N/A';
+        const finalPrice = finalPriceElement ? finalPriceElement.textContent : 'N/A';
+  
         return {
           name,
           originalPrice,
@@ -40,9 +35,11 @@ const main = async () => {
           topTags,
         };
       });
-    });
-
-    await browser.close();
+  
+      // console.log(gameSales);
+      return gameSales;
+    })
+    .catch(console.error);
 
     console.log('Checking special games...', gameSales);
 
