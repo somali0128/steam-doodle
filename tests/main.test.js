@@ -1,6 +1,5 @@
 const { coreLogic } = require('../coreLogic');
-const { _server } = require('../init');
-const { namespaceWrapper } = require('../namespaceWrapper');
+const { namespaceWrapper, _server } = require('../_koiiNode/koiiNode');
 const Joi = require('joi');
 const axios = require('axios');
 beforeAll(async () => {
@@ -12,14 +11,8 @@ describe('Performing the task', () => {
     const round = 1;
     const result = await coreLogic.task(round);
     expect(result).not.toContain('ERROR IN EXECUTING TASK');
-  }, 1000000);
+  }, 10000);
 
-  it('should fetch the submission', async () => {
-    const round = 1;
-    const result = await coreLogic.fetchSubmission(round);
-    expect(result).toBeDefined();
-    expect(result).not.toBeNaN();
-  });
   it('should make the submission to k2 for dummy round 1', async () => {
     const round = 1;
     await coreLogic.submitTask(round);
@@ -156,7 +149,7 @@ describe('Performing the task', () => {
   it('should test the endpoint', async () => {
     const response = await axios.get('http://localhost:10000');
     expect(response.status).toBe(200);
-    expect(response.data).toEqual("Welcome to Steam daily special API, you can use /getSpecialList to fetch the special list");
+    expect(response.data).toEqual('Hello World!');
   });
 });
 

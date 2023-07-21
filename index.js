@@ -1,10 +1,9 @@
 const { coreLogic } = require('./coreLogic');
-const db = require('./db');
-const { app } = require('./init');
 const {
   namespaceWrapper,
   taskNodeAdministered,
-} = require('./namespaceWrapper');
+  app
+} = require('./_koiiNode/koiiNode');
 
 async function setup() {
   console.log('setup function called');
@@ -20,7 +19,7 @@ async function setup() {
       coreLogic.auditTask(m.roundNumber);
     } else if (m.functionCall == 'executeTask') {
       console.log('executeTask called');
-      coreLogic.task(m.roundNumber);
+      coreLogic.task();
     } else if (m.functionCall == 'generateAndSubmitDistributionList') {
       console.log('generateAndSubmitDistributionList called');
       coreLogic.submitDistributionList(m.roundNumber);
@@ -92,14 +91,4 @@ if (app) {
 
     res.status(200).json({ taskState: state });
   });
-
-  app.get('/getSpecialList', async (req, res) => {
-  try {
-    const specialList = await db.getSpecialList();
-    res.send(specialList);
-  } catch (err) {
-    console.log('ERROR IN GET Special LIST', err);
-    res.send('ERROR IN GET Special LIST');
-  }
-});
 }

@@ -1,14 +1,14 @@
 const { coreLogic } = require('../coreLogic');
+const task = require('../task');
 const index = require('../index');
 
 async function test_coreLogic() {
-  // await coreLogic.task();
-  // const submission = await coreLogic.fetchSubmission(1);
-  // console.log(submission);
-  const vote = await coreLogic.validateNode('bafybeigvzc7444ohtaceul2ebi7s3xarpgfzszzwgihpdznbj65wjbobeq', 1);
+  const round = 3;
+  await coreLogic.task(round);
+  const submission = await coreLogic.submitTask(round);
+  console.log('Receive test submission', submission);
+  const audit = await task.audit.validateNode(submission, round);
   // let vote = true;
-  console.log('vote', vote);
-
   const _dummyTaskState = {
     stake_list: {
       '2NstaKU4kif7uytmS2PQi9P5M5bDLYSF2dhUNFhJbxHL': 20000000000,
@@ -60,19 +60,11 @@ async function test_coreLogic() {
       },
     },
   };
-  if (vote == true) {
+  if (audit == true) {
     console.log('Submission is valid, generating distribution list');
-    const distributionList = await coreLogic.generateDistributionList(
-      1,
-      _dummyTaskState,
-    );
+    await coreLogic.submitDistributionList(round);
 
-    await coreLogic.validateDistribution(
-      null,
-      1,
-      distributionList,
-      _dummyTaskState,
-    );
+    await task.distribution.auditDistribution(round);
   } else {
     console.log('Submission is invalid, not generating distribution list');
   }
