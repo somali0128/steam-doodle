@@ -609,10 +609,10 @@ class NamespaceWrapper {
     console.log('******/  IN VOTING /******');
     const taskAccountDataJSON = await this.getTaskState();
 
-    console.log(
-      `Fetching the submissions of round ${round}`,
-      taskAccountDataJSON.submissions[round],
-    );
+    // console.log(
+    //   `Fetching the submissions of round ${round}`,
+    //   taskAccountDataJSON.submissions[round],
+    // );
     const submissions = taskAccountDataJSON.submissions[round];
     if (submissions == null) {
       console.log(`No submisssions found in round ${round}`);
@@ -706,10 +706,10 @@ class NamespaceWrapper {
           console.log('YOU CANNOT VOTE ON YOUR OWN DISTRIBUTION SUBMISSIONS');
         } else {
           try {
-            console.log(
-              'DISTRIBUTION SUBMISSION VALUE TO CHECK',
-              values[i].submission_value,
-            );
+            // console.log(
+            //   'DISTRIBUTION SUBMISSION VALUE TO CHECK',
+            //   values[i].submission_value,
+            // );
             isValid = await validateDistribution(
               values[i].submission_value,
               round,

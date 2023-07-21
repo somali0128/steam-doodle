@@ -56,7 +56,7 @@ class Distribution {
         const keys = Object.keys(submissions);
         const values = Object.values(submissions);
         const size = values.length;
-        console.log('Submissions from last round: ', keys, values, size);
+        // console.log('Submissions from last round: ', keys, values, size);
 
         // Logic for slashing the stake of the candidate who has been audited and found to be false
         for (let i = 0; i < size; i++) {
