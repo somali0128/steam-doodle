@@ -41,7 +41,7 @@ const mainTask = async () => {
     })
     .catch(console.error);
 
-    console.log('Checking special games...', gameSales);
+    console.log('Checking special games...');
 
     const date = new Date().toISOString().slice(0, 10);
     const filename = `steam-daily-special-${date}.json`;

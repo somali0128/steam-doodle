@@ -7,6 +7,7 @@ class Submission {
   async task(round) {
 
     try {
+      console.log(`********** Start Main TASK ${round} **********`);
       const cid = await mainTask(round);
       /**
        * 1. Store the cid in the database
