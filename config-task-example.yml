@@ -1,9 +1,9 @@
 # Name and metadata of your task
 task_name: "Steam Specials v0.2"
-author: "koii"
+author: "Dongyue"
 description: "This task involves scraping daily special game offers from Steam, which includes gathering data such as the game name, original price, discounted price, and game tags. The list of games will then be stored on the InterPlanetary File System (IPFS) for decentralized storage and access."
 repositoryUrl: "https://github.com/somali0128/steam-doodle"
-imageUrl: "imageUrl"
+imageUrl: "https://bafybeia7anj5fgnstqlqwglehxoeq7yviczei3u24gvas7tjqrmt2g7e2m.ipfs.w3s.link/soma.jpeg"
 
 # network value can be DEVELOPMENT , ARWEAVE or IPFS, Recommended IPFS as the cli automatically takes care of uploading the executable with the help of web3.js key
 task_executable_network: "IPFS"
@@ -31,7 +31,7 @@ bounty_amount_per_round: 1
 allowed_failed_distributions: 3
 
 #Space in MBs for the account size, that holds the task data
-space: 1
+space: 3
 
 # Note that the value field in RequirementTag is optional, so it is up to you to include it or not based on your use case.
 # To add more global variables and task variables, please refer the type,value,description format shown below
@@ -56,7 +56,7 @@ requirementsTags:
 # OPTIONAL variables below 
 
 # OPTIONAL Only provide the taskId if you are updating the task otherwise leave blank
-task_id: ""
+task_id: "3LyGz9GXs4ypsSpdujBt1s6HH65kiQQ4t8fAPqJ2KFsQ"
 
 # OPTIONAL only Provide your transaction ID in case of ARWEAVE and in case of DEVELOPMENT give your executable name as main otherwise leave blank
 task_audit_program_id: "main"
