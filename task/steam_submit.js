@@ -11,7 +11,7 @@ const { Web3Storage, File } = require('web3.storage');
 const storageClient = new Web3Storage({
   token: process.env.SECRET_WEB3_STORAGE_KEY,
 });
-const { namespaceWrapper } = require('./namespaceWrapper');
+const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 
 const submit = async round => {
 

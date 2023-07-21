@@ -1,17 +1,94 @@
 const { default: axios } = require('axios');
-const {
-  TASK_ID,
-  SECRET_KEY,
-  TASK_NODE_PORT,
-  MAIN_ACCOUNT_PUBKEY,
-} = require('./init');
+
 const { Connection, PublicKey, Keypair } = require('@_koi/web3.js');
-const taskNodeAdministered = !!TASK_ID;
-const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
+
 const Datastore = require('nedb-promises');
 const fsPromises = require('fs/promises');
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
+
+/****************************************** init.js ***********************************/
+
+const express = require('express');
+// Only used for testing purposes, in production the env will be injected by tasknode
+require('dotenv').config();
+const bodyParser = require('body-parser');
+/**
+ * This will be the name of the current task as coming from the task node running this task.
+ */
+const TASK_NAME = process.argv[2] || 'Local';
+/** 
+ * This will be the id of the current task as coming from the task node running this task.
+ */
+const TASK_ID = process.argv[3];
+/**
+ * This will be the PORT on which the this task is expected to run the express server coming from the task node running this task. 
+ * As all communication via the task node and this task will be done on this port.
+ */
+const EXPRESS_PORT = process.argv[4] || 10000;
+
+// Not used anymore
+// const NODE_MODE = process.argv[5];
+
+/**
+ * This will be the main account public key in string format of the task node running this task.
+ */
+const MAIN_ACCOUNT_PUBKEY = process.argv[6];
+/**
+  * This will be the secret used by the task to authenticate with task node running this task.
+ */
+const SECRET_KEY = process.argv[7];
+/**
+ * This will be K2 url being used by the task node, possible values are 'https://k2-testnet.koii.live' | 'https://k2-devnet.koii.live' | 'http://localhost:8899'
+ */
+const K2_NODE_URL = process.argv[8] || 'https://k2-testnet.koii.live';
+/**
+ * This will be public task node endpoint (Or local if it doesn't have any) of the task node running this task.
+ */
+const SERVICE_URL = process.argv[9];
+/**
+ * This will be stake of the task node running this task, can be double checked with the task state and staking public key.
+ */
+const STAKE = Number(process.argv[10]);
+/**
+ * This will be the port used by task node as the express server port, so it can be used by the task for the communication with the task node
+ */
+const TASK_NODE_PORT = Number(process.argv[11]);
+
+const app = express();
+
+console.log('SETTING UP EXPRESS');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, PATCH, DELETE',
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', false);
+  if (req.method === 'OPTIONS')
+    // if is preflight(OPTIONS) then response status 204(NO CONTENT)
+    return res.send(204);
+  next();
+});
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+const _server = app.listen(EXPRESS_PORT, () => {
+  console.log(`${TASK_NAME} listening on port ${EXPRESS_PORT}`);
+});
+
+/****************************************** NamespaceWrapper.js ***********************************/
+
+const taskNodeAdministered = !!TASK_ID;
+const BASE_ROOT_URL = `http://localhost:${TASK_NODE_PORT}/namespace-wrapper`;
 
 class NamespaceWrapper {
   #db;
@@ -25,7 +102,7 @@ class NamespaceWrapper {
       this.initializeDB();
     } else {
       this.#db = Datastore.create('./localKOIIDB.db');
-      this.defaultTaskSetup()
+      this.defaultTaskSetup();
     }
   }
 
@@ -463,7 +540,7 @@ class NamespaceWrapper {
     if (taskNodeAdministered) {
       return await genericHandler('defaultTaskSetup');
     } else {
-      if(this.#testingTaskState)return
+      if (this.#testingTaskState) return;
       this.#testingMainSystemAccount = new Keypair();
       this.#testingStakingSystemAccount = new Keypair();
       this.#testingDistributionList = {};
@@ -532,10 +609,10 @@ class NamespaceWrapper {
     console.log('******/  IN VOTING /******');
     const taskAccountDataJSON = await this.getTaskState();
 
-    console.log(
-      `Fetching the submissions of round ${round}`,
-      taskAccountDataJSON.submissions[round],
-    );
+    // console.log(
+    //   `Fetching the submissions of round ${round}`,
+    //   taskAccountDataJSON.submissions[round],
+    // );
     const submissions = taskAccountDataJSON.submissions[round];
     if (submissions == null) {
       console.log(`No submisssions found in round ${round}`);
@@ -544,7 +621,7 @@ class NamespaceWrapper {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
       const size = values.length;
-      console.log('Submissions from last round: ', keys, values, size);
+      console.log('Size of submissions in last round', size);
       let isValid;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
@@ -608,10 +685,6 @@ class NamespaceWrapper {
     // await this.checkVoteStatus();
     console.log('******/  IN VOTING OF DISTRIBUTION LIST /******');
     const taskAccountDataJSON = await this.getTaskState();
-    console.log(
-      `Fetching the Distribution submissions of round ${round}`,
-      taskAccountDataJSON.distribution_rewards_submission[round],
-    );
     const submissions =
       taskAccountDataJSON.distribution_rewards_submission[round];
     if (submissions == null) {
@@ -621,12 +694,6 @@ class NamespaceWrapper {
       const keys = Object.keys(submissions);
       const values = Object.values(submissions);
       const size = values.length;
-      console.log(
-        'Distribution Submissions from last round: ',
-        keys,
-        values,
-        size,
-      );
       let isValid;
       const submitterAccountKeyPair = await this.getSubmitterAccount();
       const submitterPubkey = submitterAccountKeyPair.publicKey.toBase58();
@@ -639,10 +706,10 @@ class NamespaceWrapper {
           console.log('YOU CANNOT VOTE ON YOUR OWN DISTRIBUTION SUBMISSIONS');
         } else {
           try {
-            console.log(
-              'DISTRIBUTION SUBMISSION VALUE TO CHECK',
-              values[i].submission_value,
-            );
+            // console.log(
+            //   'DISTRIBUTION SUBMISSION VALUE TO CHECK',
+            //   values[i].submission_value,
+            // );
             isValid = await validateDistribution(
               values[i].submission_value,
               round,
@@ -653,10 +720,6 @@ class NamespaceWrapper {
               // check for the submissions_audit_trigger , if it exists then vote true on that otherwise do nothing
               const distributions_audit_trigger =
                 taskAccountDataJSON.distributions_audit_trigger[round];
-              console.log(
-                'SUBMIT DISTRIBUTION AUDIT TRIGGER',
-                distributions_audit_trigger,
-              );
               // console.log(
               //   "CANDIDATE PUBKEY CHECK IN AUDIT TRIGGER",
               //   distributions_audit_trigger[candidatePublicKey]
@@ -671,10 +734,6 @@ class NamespaceWrapper {
                   isValid,
                   submitterAccountKeyPair,
                   round,
-                );
-                console.log(
-                  'RESPONSE FROM DISTRIBUTION AUDIT FUNCTION',
-                  response,
                 );
               }
             } else if (isValid == false) {
@@ -753,5 +812,14 @@ if (taskNodeAdministered) {
 }
 module.exports = {
   namespaceWrapper,
-  taskNodeAdministered,
+  taskNodeAdministered, // Boolean flag indicating that the task is being ran in active mode (Task node supervised), or development (testing) mode 
+  app, // The initialized express app to be used to register endpoints
+  TASK_ID, // This will be the PORT on which the this task is expected to run the express server coming from the task node running this task. As all communication via the task node and this task will be done on this port.
+  MAIN_ACCOUNT_PUBKEY, // This will be the secret used to authenticate with task node running this task.
+  SECRET_KEY, // This will be the secret used by the task to authenticate with task node running this task.
+  K2_NODE_URL, // This will be K2 url being used by the task node, possible values are 'https://k2-testnet.koii.live' | 'https://k2-devnet.koii.live' | 'http://localhost:8899'
+  SERVICE_URL, // This will be public task node endpoint (Or local if it doesn't have any) of the task node running this task.
+  STAKE, // This will be stake of the task node running this task, can be double checked with the task state and staking public key.
+  TASK_NODE_PORT, // This will be the port used by task node as the express server port, so it can be used by the task for the communication with the task node
+  _server, // Express server object
 };

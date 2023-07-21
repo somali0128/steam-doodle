@@ -1,16 +1,17 @@
-const { namespaceWrapper } = require('./namespaceWrapper');
+const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 
 const setSpecial = async (cid, round) => {
   const db = await namespaceWrapper.getDb();
   try {
     let existingRound = await db.findOne({ round });
+    // console.log('existingRound', existingRound);
     if (!existingRound) {
       const date = new Date().toISOString().slice(0, 10);
       await db.insert({ date, cid, round });
-      console.log('new steam special set');
+      console.log(`new steam special set in round ${round}`);
       return true;
     } else {
-      console.log('steam special already set');
+      console.log(`steam special already exist in round ${round}`);
       return false;
     }
   } catch (err) {

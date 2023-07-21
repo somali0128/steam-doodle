@@ -1,14 +1,16 @@
 # Koii Task - Steam Daily Special
 
-This task scrape steam daily special games and submit the special games to IPFS and the cid of the special is submitted to K2.
+This task scrape steam daily Top 40 special games and submit the specials list to IPFS and the cid of the specials is submitted to K2.
 ## Requirements
 
 - [Node >=16.0.0](https://nodejs.org)
 
 ## What's in the task?
 
-- `special_task.js` - This is the main task file. It contains the code for scraping the special games and submitting it to IPFS and K2.
-- `special_submit.js` - This file contains the code that use cid of steam special games generate the signatuer, then create a new node_proof, upload to IPFS and use proof_cid as the submission value.
+The task functions are in task folder. It contains the following files:
+
+- `special_task.js` - This is the main task file. It contains the code for scraping the special games and submitting it to IPFS.
+- `special_submit.js` - This file contains the code that use cid of steam special games generate the signatuer, then create a new node_proof, upload to IPFS and use proof_cid as the submission value. The submission gonna be submitted to K2.
 - `special_audit.js` - This file contains function that check if signature is true and avaliable of special. Next return the value of vote.
 - `db.js` - This file contains the code for connecting to the database.
 - It also include GET endpoint `/getSpecialList` to get the list of specials submitted to K2.

@@ -1,8 +1,8 @@
 require('dotenv').config();
-const dataFromCid = require('./helpers/dataFromCid');
-const {namespaceWrapper} = require('./namespaceWrapper');
+const dataFromCid = require('../helpers/dataFromCid');
+const {namespaceWrapper} = require('../_koiiNode/koiiNode');
 
-const audit = async (submission) => {
+const auditValue = async (submission) => {
     const outputraw = await dataFromCid(submission);
     if (!outputraw) {
         console.log('VOTE FALSE');
@@ -14,6 +14,10 @@ const audit = async (submission) => {
     const { steam_special, nodePublicKey, signature } = output;
     const voteResp = await namespaceWrapper.verifySignature(signature, nodePublicKey);
     const cleanVoteRespData = voteResp.data.replace(/"/g, '');
+    if (cleanVoteRespData && steam_special == null) {
+        console.log('No steam special submit in this round');
+        return true;
+    }
     if (!voteResp || cleanVoteRespData !== steam_special) {
         console.log('VOTE FALSE');
         console.log('SLASH VOTE DUE TO DATA MISMATCH');
@@ -38,5 +42,5 @@ const audit = async (submission) => {
 };
 
 module.exports = {
-    audit,
+    auditValue,
 };
