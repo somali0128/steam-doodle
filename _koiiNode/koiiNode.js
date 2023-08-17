@@ -375,7 +375,6 @@ class NamespaceWrapper {
         'auditSubmission',
         candidatePubkey,
         isValid,
-        voterKeypair,
         round,
       );
     } else {
