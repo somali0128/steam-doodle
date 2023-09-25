@@ -15,6 +15,7 @@ const { namespaceWrapper } = require('../_koiiNode/koiiNode');
 
 const submit = async round => {
 
+  try {
   const cid = await db.getSpecial(round); // retrieves the cid
   console.log('Found CID in round ', round, cid);
   const signature = await namespaceWrapper.payloadSigning(cid);
@@ -34,6 +35,10 @@ const submit = async round => {
   console.log(`Uploaded and got proof_cid: ${proof_cid}`);
 
   return proof_cid;
+  } catch (err) {
+    console.log('Error in steam_submit.js', err);
+    return null;
+  }
 };
 
 module.exports = {
